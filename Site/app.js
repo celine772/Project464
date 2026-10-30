@@ -82,6 +82,38 @@ function makePopupContent(title, details) {
     return content;
 }
 
+function translateWifiType(type) {
+    const translations = {
+        'arena': 'Arena',
+        'bam': 'BAM',
+        'bibliotheque': 'Library',
+        'bibliotheque, centre communautaire': 'Library, Community Centre',
+        'bibliotheque, maison de la culture': 'Library, Cultural Centre',
+        'biodome': 'Biodome',
+        'biosphere': 'Biosphere',
+        'cafe': 'Cafe',
+        'centre communautaire': 'Community Centre',
+        'centre communautaire, chalet': 'Community Centre, Chalet',
+        'centre sportif': 'Sports Centre',
+        'chalet': 'Chalet',
+        'cour municipale': 'Municipal Court',
+        'espace vie': 'Living Space',
+        'grand potager': 'Large Vegetable Garden',
+        'insectarium': 'Insectarium',
+        'intersection': 'Intersection',
+        'jardin botanique': 'Botanical Garden',
+        'jardins d\'expositions': 'Exhibition Gardens',
+        'mairie': 'City Hall',
+        'maison de la culture': 'Cultural Centre',
+        'musee': 'Museum',
+        'parc': 'Park',
+        'piscine': 'Pool',
+        'planetarium': 'Planetarium'
+    };
+    const key = type.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    return translations[key] || type;
+}
+
 const pointCollections = [];
 let renderedMarkers = [];
 const clusterDistance = 20;
@@ -292,9 +324,12 @@ function loadPointData() {
             };
 
             addClusteredPointLayer('wifi', shown, '#111827', '../Images/wifi.svg', function (properties) {
-                return makePopupContent(properties.lieu, [
-                    { label: 'Type', value: properties.wifi_type },
-                    { label: 'Arrondissement', value: properties.arrondissement }
+                return makePopupContent('Free WIFI spot', [
+                    { value: translateWifiType(properties.wifi_type) },
+                    {
+                        label: 'Address',
+                        value: properties.lieu.replace(/\b[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d\b/gi, '').trim()
+                    }
                 ]);
             });
 
