@@ -19,6 +19,12 @@
             <p><strong>What you can do here:</strong> Black circles show Wi-Fi, blue circles show drinking fountains,
                 and red circles show tourist attractions. Nearby points cluster together; cluster labels show counts
                 such as 10+ and 20+. Click a cluster to zoom in, or click an individual point for details.</p>
+            <form id="location-search">
+                <label for="location-query">Search an address or place in Montréal</label>
+                <input id="location-query" type="search" required>
+                <button type="submit">Search</button>
+            </form>
+            <p id="search-status" role="status" aria-live="polite"></p>
             <p id="status" role="status" aria-live="polite"></p>
 
 

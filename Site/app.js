@@ -9,9 +9,58 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
 const status = document.getElementById('status');
+const searchForm = document.getElementById('location-search');
+const searchStatus = document.getElementById('search-status');
 let wifiSummary = 'Loading Wi-Fi locations…';
 let attractionSummary = 'Loading tourist attractions…';
 let fountainSummary = 'Loading public fountains…';
+
+searchForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    searchLocation(document.getElementById('location-query').value.trim());
+});
+
+function searchLocation(query) {
+    if (!query) {
+        searchStatus.textContent = 'Enter an address or place to search.';
+        return;
+    }
+
+    searchStatus.textContent = 'Searching…';
+    const url = 'https://photon.komoot.io/api/?q=' + encodeURIComponent(query) +
+        '&lat=45.5017&lon=-73.5673&limit=10';
+
+    fetch(url)
+        .then(function (response) {
+            if (!response.ok) { throw new Error('Search request failed'); }
+            return response.json();
+        })
+        .then(function (data) {
+            const result = data.features.find(function (feature) {
+                const coordinates = feature.geometry.coordinates;
+                const longitude = coordinates[0];
+                const latitude = coordinates[1];
+                const properties = feature.properties || {};
+                const city = properties.city || properties.locality;
+                const isMontreal = !city || city.normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'montreal';
+
+                return isMontreal && longitude >= -73.99 && longitude <= -73.45 &&
+                    latitude >= 45.40 && latitude <= 45.70;
+            });
+
+            if (!result) {
+                searchStatus.textContent = 'Address or place could not be found in Montréal.';
+                return;
+            }
+
+            map.flyTo({ center: result.geometry.coordinates, zoom: 15 });
+            searchStatus.textContent = 'Map moved to the search result.';
+        })
+        .catch(function () {
+            searchStatus.textContent = 'Address or place could not be found in Montréal.';
+        });
+}
 
 function updateStatus() {
     status.textContent = wifiSummary + ' · ' + attractionSummary + ' · ' + fountainSummary;
