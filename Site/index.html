@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>[Your page title]</title>
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="page">
+        <main class="story">
+            <h1>Free WIFI spots in Montreal</h1>
+            <p class="lede">Find free Wi-Fi locations around Montréal and see which ones are near popular tourist
+                attractions.</p>
+            <p><strong>This map is for:</strong> Visitors to Montréal.</p>
+            <p><strong>What you can do here:</strong> Black circles show Wi-Fi, blue circles show drinking fountains,
+                and red circles show tourist attractions. Nearby points cluster together; cluster labels show counts
+                such as 10+ and 20+. Click a cluster to zoom in, or click an individual point for details.</p>
+            <p id="status" role="status" aria-live="polite"></p>
+
+
+            <section>
+                <h2>Map layers</h2>
+                <p>The map displays Wi-Fi locations from <em>internet.geojson</em>, tourist attractions from
+                    <em>tourist_attractions.geojson</em>, and public fountains from <em>Public_Fountains.csv</em>.
+                    Fountain rows marked “accès restreint” have been excluded. Each layer has its own colored point
+                    clusters.
+                </p>
+            </section>
+            <section>
+                <h2>Where this comes from</h2>
+                <ul>
+                    <li><a href="https://donnees.montreal.ca/en/dataset/couverture-du-reseau-wifi-mtlwifi">Bornes du
+                            réseau sans fil MTLWiFi
+                        </a>, Service de la planification stratégique, de la performance et de l'innovation,
+                        [licence], accessed 20/09/2026. I removed the columns that had inactive WIFI sites.</li>
+                </ul>
+            </section>
+        </main>
+        <div id="map"></div>
+    </div>
+    <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
