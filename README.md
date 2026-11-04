@@ -30,4 +30,4 @@ Test 3: I type in an address which is not in Montreal.
 | 5. The data does not come | pass
 | 6. On a phone (size view and my phone) | pass
 | 7. Mouse in my pocket | pass
-| 8. Accessibility audit | ... | ... |
+| 8. Accessibility audit | fault | I was getting an error that my attributes do not match their roles | I fixed it by changing the HTML. It did not impact the funtion of the search bar but it did improve the accesibility feature.

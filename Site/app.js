@@ -15,9 +15,7 @@ const searchStatus = document.getElementById('search-status');
 const suggestions = document.getElementById('search-suggestions');
 const layersToggle = document.getElementById('layers-toggle');
 const layersPanel = document.getElementById('layers-panel');
-let wifiSummary = 'Loading Wi-Fi locations…';
-let attractionSummary = 'Loading tourist attractions…';
-let fountainSummary = 'Loading public fountains…';
+const loadErrors = [];
 let suggestionTimer;
 let suggestionRequest = 0;
 
@@ -181,8 +179,9 @@ function searchLocation(query) {
         });
 }
 
-function updateStatus() {
-    status.textContent = wifiSummary + ' · ' + attractionSummary + ' · ' + fountainSummary;
+function showLoadError(message) {
+    loadErrors.push(message);
+    status.textContent = loadErrors.join(' · ');
 }
 
 function makePopupContent(title, details) {
@@ -442,8 +441,6 @@ function loadFountains() {
     });
 }
 
-updateStatus();
-
 function loadPointData() {
     loadGeoJSON('../Data/internet.geojson')
         .then(function (data) {
@@ -462,12 +459,9 @@ function loadPointData() {
                 ]);
             });
 
-            wifiSummary = shown.features.length + ' of ' + data.features.length + ' Wi-Fi locations shown';
-            updateStatus();
         })
         .catch(function (error) {
-            wifiSummary = 'Could not load Wi-Fi locations';
-            updateStatus();
+            showLoadError('Wi-Fi locations could not be loaded');
             console.error(error);
         });
 
@@ -480,12 +474,9 @@ function loadPointData() {
                 ]);
             });
 
-            attractionSummary = data.features.length + ' tourist attractions shown';
-            updateStatus();
         })
         .catch(function (error) {
-            attractionSummary = 'Could not load tourist attractions';
-            updateStatus();
+            showLoadError('Tourist attractions could not be loaded');
             console.error(error);
         });
 
@@ -497,12 +488,9 @@ function loadPointData() {
                 ]);
             });
 
-            fountainSummary = data.features.length + ' public fountains shown';
-            updateStatus();
         })
         .catch(function (error) {
-            fountainSummary = 'Could not load public fountains';
-            updateStatus();
+            showLoadError('Public fountain locations could not be loaded.');
             console.error(error);
         });
 }
