@@ -10,47 +10,93 @@
 </head>
 
 <body>
-    <div class="page">
-        <main class="story">
-            <h1>Free WIFI spots in Montreal</h1>
-            <p class="lede">Find free Wi-Fi locations around Montréal and see which ones are near popular tourist
-                attractions.</p>
-            <p><strong>This map is for:</strong> Visitors to Montréal.</p>
-            <p><strong>What you can do here:</strong> Black circles show Wi-Fi, blue circles show drinking fountains,
-                and red circles show tourist attractions. Nearby points cluster together; cluster labels show counts
-                such as 10+ and 20+. Click a cluster to zoom in, or click an individual point for details.</p>
-            <form id="location-search">
-                <label for="location-query">Search an address or place in Montréal</label>
-                <input id="location-query" type="search" required autocomplete="off" aria-autocomplete="list"
-                    aria-controls="search-suggestions" aria-expanded="false">
-                <button type="submit">Search</button>
-                <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"
-                    hidden></div>
-            </form>
-            <p id="search-status" role="status" aria-live="polite"></p>
-            <p id="status" role="status" aria-live="polite"></p>
+    <main class="map-page">
+        <header class="intro">
+            <p class="eyebrow">A MONTRÉAL CITY GUIDE</p>
+            <h1>Explore Montréal.</h1>
+            <p class="lede">Find a place to connect, take a break, and discover local highlights as you explore
+                the city.</p>
+        </header>
 
+        <form id="location-search">
+            <label for="location-query">Find an address or place</label>
+            <input id="location-query" type="search" required autocomplete="off" aria-autocomplete="list"
+                aria-controls="search-suggestions" aria-expanded="false">
+            <button type="submit">Search</button>
+            <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"
+                hidden></div>
+        </form>
+        <p id="search-status" role="status" aria-live="polite"></p>
+        <p id="status" class="data-status" role="status" aria-live="polite"></p>
 
-            <section>
-                <h2>Map layers</h2>
-                <p>The map displays Wi-Fi locations from <em>internet.geojson</em>, tourist attractions from
-                    <em>tourist_attractions.geojson</em>, and public fountains from <em>Public_Fountains.csv</em>.
-                    Fountain rows marked “accès restreint” have been excluded. Each layer has its own colored point
-                    clusters.
-                </p>
+        <div class="map-frame">
+            <div id="map" aria-label="Interactive map of Montréal Wi-Fi, fountains, and tourist attractions"></div>
+            <div class="map-layers-control">
+                <button id="layers-toggle" type="button" aria-expanded="false" aria-controls="layers-panel">
+                    Explore the layers <span aria-hidden="true">⌄</span>
+                </button>
+                <section id="layers-panel" class="layers-panel" aria-labelledby="layers-heading" hidden>
+                    <h2 id="layers-heading">Explore the layers</h2>
+                    <ul class="layer-list">
+                        <li>
+                            <span class="layer-dot wifi-dot" aria-hidden="true"></span>
+                            <span class="layer-description"><strong>Free Wi-Fi</strong><small>Public access points
+                                    around the city</small></span>
+                            <input class="layer-checkbox" type="checkbox" data-layer-id="wifi" checked
+                                aria-label="Show Wi-Fi locations">
+                        </li>
+                        <li>
+                            <span class="layer-dot fountain-dot" aria-hidden="true"></span>
+                            <span class="layer-description"><strong>Drinking fountains</strong><small>Public water
+                                    fountains</small></span>
+                            <input class="layer-checkbox" type="checkbox" data-layer-id="fountains" checked
+                                aria-label="Show drinking fountains">
+                        </li>
+                        <li>
+                            <span class="layer-dot attraction-dot" aria-hidden="true"></span>
+                            <span class="layer-description"><strong>Tourist attractions</strong><small>Places to visit
+                                    and explore</small></span>
+                            <input class="layer-checkbox" type="checkbox" data-layer-id="landmarks" checked
+                                aria-label="Show tourist attractions">
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <div class="map-information">
+            <section class="info-section" aria-labelledby="about-heading">
+                <h2 id="about-heading">About this map</h2>
+                <p>This map helps visitors to Montréal find free public Wi-Fi, drinking fountains, and popular tourist
+                    attractions. It focuses on the City of Montréal and is designed as a practical guide while
+                    exploring.</p>
             </section>
-            <section>
-                <h2>Where this comes from</h2>
-                <ul>
-                    <li><a href="https://donnees.montreal.ca/en/dataset/couverture-du-reseau-wifi-mtlwifi">Bornes du
-                            réseau sans fil MTLWiFi
-                        </a>, Service de la planification stratégique, de la performance et de l'innovation,
-                        [licence], accessed 20/09/2026. I removed the columns that had inactive WIFI sites.</li>
+
+            <section class="info-section sources" aria-labelledby="sources-heading">
+                <h2 id="sources-heading">Data sources &amp; method</h2>
+                <p>Wi-Fi locations are based on the City of Montréal’s MTLWiFi open dataset. The map also uses the
+                    project’s attraction and fountain datasets. Fountain records marked “accès restreint” are excluded;
+                    nearby points are grouped visually according to their screen position.</p>
+                <ul class="source-list">
+                    <li><a href="https://donnees.montreal.ca/en/dataset/couverture-du-reseau-wifi-mtlwifi"
+                            target="_blank" rel="noreferrer">City of Montréal MTLWiFi dataset</a></li>
+                    <li><a href="../Data/internet.geojson">Wi-Fi locations data</a></li>
+                    <li><a href="../Data/tourist_attractions.geojson">Tourist attractions data</a></li>
+                    <li><a href="../Data/Public_Fountains.csv">Public fountains data</a></li>
                 </ul>
+                <p class="credit">Data and map presentation prepared for an academic project.</p>
             </section>
-        </main>
-        <div id="map"></div>
-    </div>
+
+            <section class="info-section" aria-labelledby="howto-heading">
+                <h2 id="howto-heading">How to use this map</h2>
+                <p>Marker colours identify the layer: dark markers are Wi-Fi, blue markers are fountains, and terracotta
+                    markers are attractions. Nearby locations cluster together; click a cluster to zoom in. Select an
+                    individual marker to read its details.</p>
+                <p>Search for a street address or place in Montréal. Choose a suggestion as you type, or submit the
+                    search to move the map to a match.</p>
+            </section>
+        </div>
+    </main>
     <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
     <script src="app.js"></script>
 </body>

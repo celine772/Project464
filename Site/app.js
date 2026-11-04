@@ -13,11 +13,30 @@ const searchForm = document.getElementById('location-search');
 const searchInput = document.getElementById('location-query');
 const searchStatus = document.getElementById('search-status');
 const suggestions = document.getElementById('search-suggestions');
+const layersToggle = document.getElementById('layers-toggle');
+const layersPanel = document.getElementById('layers-panel');
 let wifiSummary = 'Loading Wi-Fi locations…';
 let attractionSummary = 'Loading tourist attractions…';
 let fountainSummary = 'Loading public fountains…';
 let suggestionTimer;
 let suggestionRequest = 0;
+
+layersToggle.addEventListener('click', function () {
+    const expanded = layersToggle.getAttribute('aria-expanded') === 'true';
+    layersToggle.setAttribute('aria-expanded', String(!expanded));
+    layersPanel.hidden = expanded;
+});
+
+layersPanel.addEventListener('change', function (event) {
+    const layerId = event.target.getAttribute('data-layer-id');
+    if (!layerId) { return; }
+
+    const collection = pointCollections.find(function (item) { return item.id === layerId; });
+    if (!collection) { return; }
+
+    collection.visible = event.target.checked;
+    refreshPointMarkers();
+});
 
 searchForm.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -219,7 +238,15 @@ let renderedMarkers = [];
 const clusterDistance = 20;
 
 function addClusteredPointLayer(id, data, color, iconPath, popupDetails) {
-    pointCollections.push({ id: id, data: data, color: color, iconPath: iconPath, popupDetails: popupDetails });
+    const layerToggle = layersPanel.querySelector('[data-layer-id="' + id + '"]');
+    pointCollections.push({
+        id: id,
+        data: data,
+        color: color,
+        iconPath: iconPath,
+        popupDetails: popupDetails,
+        visible: layerToggle ? layerToggle.checked : true
+    });
     refreshPointMarkers();
 }
 
@@ -241,6 +268,8 @@ function refreshPointMarkers() {
     const height = canvas.clientHeight;
 
     pointCollections.forEach(function (collection) {
+        if (!collection.visible) { return; }
+
         const points = [];
 
         collection.data.features.forEach(function (feature) {
