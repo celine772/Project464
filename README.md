@@ -20,3 +20,14 @@ Test 2: I type in the name of a restaurant.
 Test 3: I type in an address which is not in Montreal.
     Expected: Map sends a message that the address could not be found.
 
+## Pre-flight report (Lab 7)
+| Check | Result | What I did |
+| --- | --- | --- |
+| 1. Cold start | pass
+| 2. Read every label | pass
+| 3. Ask twice | pass
+| 4. The edge | fault | It was giving me different error messages deoending on whether I pressed the "Enter" button or the "Search" bar. | I fixed it by making the erorr messages the same in the code.
+| 5. The data does not come | pass
+| 6. On a phone (size view and my phone) | pass
+| 7. Mouse in my pocket | pass
+| 8. Accessibility audit | ... | ... |
