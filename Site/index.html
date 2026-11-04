@@ -21,8 +21,11 @@
                 such as 10+ and 20+. Click a cluster to zoom in, or click an individual point for details.</p>
             <form id="location-search">
                 <label for="location-query">Search an address or place in Montréal</label>
-                <input id="location-query" type="search" required>
+                <input id="location-query" type="search" required autocomplete="off" aria-autocomplete="list"
+                    aria-controls="search-suggestions" aria-expanded="false">
                 <button type="submit">Search</button>
+                <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"
+                    hidden></div>
             </form>
             <p id="search-status" role="status" aria-live="polite"></p>
             <p id="status" role="status" aria-live="polite"></p>

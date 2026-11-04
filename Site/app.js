@@ -10,14 +10,129 @@ map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
 const status = document.getElementById('status');
 const searchForm = document.getElementById('location-search');
+const searchInput = document.getElementById('location-query');
 const searchStatus = document.getElementById('search-status');
+const suggestions = document.getElementById('search-suggestions');
 let wifiSummary = 'Loading Wi-Fi locations…';
 let attractionSummary = 'Loading tourist attractions…';
 let fountainSummary = 'Loading public fountains…';
+let suggestionTimer;
+let suggestionRequest = 0;
 
 searchForm.addEventListener('submit', function (event) {
     event.preventDefault();
-    searchLocation(document.getElementById('location-query').value.trim());
+    searchLocation(searchInput.value.trim());
+});
+
+function isMontrealResult(feature) {
+    const coordinates = feature.geometry.coordinates;
+    const longitude = coordinates[0];
+    const latitude = coordinates[1];
+    const properties = feature.properties || {};
+    const city = properties.city || properties.locality;
+    const isMontreal = !city || city.normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'montreal';
+
+    return isMontreal && longitude >= -73.99 && longitude <= -73.45 &&
+        latitude >= 45.40 && latitude <= 45.70;
+}
+
+function photonSearchUrl(query, limit) {
+    return 'https://photon.komoot.io/api/?q=' + encodeURIComponent(query) +
+        '&lat=45.5017&lon=-73.5673&limit=' + limit;
+}
+
+function closeSuggestions() {
+    suggestions.hidden = true;
+    searchInput.setAttribute('aria-expanded', 'false');
+}
+
+function showSuggestions(features) {
+    suggestions.replaceChildren();
+    features.forEach(function (feature) {
+        const properties = feature.properties || {};
+        const streetAddress = [properties.housenumber, properties.street].filter(Boolean).join(' ');
+        const primary = properties.name || streetAddress || properties.street || properties.city || 'Location';
+        const secondary = [streetAddress, properties.city || properties.locality, properties.state]
+            .filter(function (part, index, parts) { return part && part !== primary && parts.indexOf(part) === index; })
+            .join(', ');
+        const label = secondary ? primary + ' — ' + secondary : primary;
+        const option = document.createElement('button');
+        option.type = 'button';
+        option.setAttribute('role', 'option');
+        option.textContent = label;
+        option.addEventListener('click', function () { selectSearchResult(feature, label); });
+        suggestions.appendChild(option);
+    });
+
+    suggestions.hidden = features.length === 0;
+    searchInput.setAttribute('aria-expanded', String(features.length > 0));
+}
+
+function selectSearchResult(feature, label) {
+    searchInput.value = label;
+    closeSuggestions();
+    searchInput.focus();
+    map.flyTo({ center: feature.geometry.coordinates, zoom: 15 });
+    searchStatus.textContent = 'Map moved to ' + label + '.';
+}
+
+searchInput.addEventListener('input', function () {
+    const query = searchInput.value.trim();
+    clearTimeout(suggestionTimer);
+    const requestId = ++suggestionRequest;
+
+    if (query.length < 2) {
+        closeSuggestions();
+        searchStatus.textContent = '';
+        return;
+    }
+
+    suggestionTimer = setTimeout(function () {
+        fetch(photonSearchUrl(query, 10))
+            .then(function (response) {
+                if (!response.ok) { throw new Error('Search request failed'); }
+                return response.json();
+            })
+            .then(function (data) {
+                if (requestId !== suggestionRequest) { return; }
+                const matches = data.features.filter(isMontrealResult).slice(0, 6);
+                showSuggestions(matches);
+                searchStatus.textContent = matches.length ?
+                    matches.length + ' suggestions available.' : 'No Montréal matches found.';
+            })
+            .catch(function () {
+                if (requestId !== suggestionRequest) { return; }
+                closeSuggestions();
+                searchStatus.textContent = 'Search suggestions could not be loaded.';
+            });
+    }, 250);
+});
+
+searchInput.addEventListener('keydown', function (event) {
+    const options = suggestions.querySelectorAll('button');
+    if (event.key === 'ArrowDown' && options.length) {
+        event.preventDefault();
+        options[0].focus();
+    } else if (event.key === 'Escape') {
+        closeSuggestions();
+    }
+});
+
+suggestions.addEventListener('keydown', function (event) {
+    const options = Array.from(suggestions.querySelectorAll('button'));
+    const currentIndex = options.indexOf(document.activeElement);
+    if (event.key === 'ArrowDown' && currentIndex < options.length - 1) {
+        event.preventDefault();
+        options[currentIndex + 1].focus();
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (currentIndex <= 0) { searchInput.focus(); }
+        else { options[currentIndex - 1].focus(); }
+    } else if (event.key === 'Escape') {
+        closeSuggestions();
+        searchInput.focus();
+    }
 });
 
 function searchLocation(query) {
@@ -26,36 +141,21 @@ function searchLocation(query) {
         return;
     }
 
+    closeSuggestions();
     searchStatus.textContent = 'Searching…';
-    const url = 'https://photon.komoot.io/api/?q=' + encodeURIComponent(query) +
-        '&lat=45.5017&lon=-73.5673&limit=10';
-
-    fetch(url)
+    fetch(photonSearchUrl(query, 10))
         .then(function (response) {
             if (!response.ok) { throw new Error('Search request failed'); }
             return response.json();
         })
         .then(function (data) {
-            const result = data.features.find(function (feature) {
-                const coordinates = feature.geometry.coordinates;
-                const longitude = coordinates[0];
-                const latitude = coordinates[1];
-                const properties = feature.properties || {};
-                const city = properties.city || properties.locality;
-                const isMontreal = !city || city.normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '').toLowerCase() === 'montreal';
-
-                return isMontreal && longitude >= -73.99 && longitude <= -73.45 &&
-                    latitude >= 45.40 && latitude <= 45.70;
-            });
-
+            const result = data.features.find(isMontrealResult);
             if (!result) {
                 searchStatus.textContent = 'Address or place could not be found in Montréal.';
                 return;
             }
 
-            map.flyTo({ center: result.geometry.coordinates, zoom: 15 });
-            searchStatus.textContent = 'Map moved to the search result.';
+            selectSearchResult(result, query);
         })
         .catch(function () {
             searchStatus.textContent = 'Address or place could not be found in Montréal.';
@@ -364,7 +464,7 @@ function loadPointData() {
         .then(function (data) {
             addClusteredPointLayer('fountains', data, '#2563eb', '../Images/glass-water%20(1).svg', function (properties) {
                 return makePopupContent('Public Water Fountain', [
-                    { value: properties.Intersection }
+                    { label: 'Address', value: properties.Intersection }
                 ]);
             });
 

@@ -49,6 +49,50 @@ h2 {
     font-size: 15px;
 }
 
+#location-search {
+    position: relative;
+}
+
+#location-query {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px;
+    font: inherit;
+}
+
+.search-suggestions:not([hidden]) {
+    position: absolute;
+    z-index: 2;
+    top: 100%;
+    right: 0;
+    left: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid #8792a2;
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 20%);
+}
+
+.search-suggestions button {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-bottom: 1px solid #e2e5e9;
+    background: #ffffff;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.search-suggestions button:hover,
+.search-suggestions button:focus-visible {
+    background: #e8eef8;
+    outline: none;
+}
+
 a {
     color: var(--accent);
 }
