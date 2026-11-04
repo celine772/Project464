@@ -118,7 +118,7 @@ searchInput.addEventListener('input', function () {
                 const matches = data.features.filter(isMontrealResult).slice(0, 6);
                 showSuggestions(matches);
                 searchStatus.textContent = matches.length ?
-                    matches.length + ' suggestions available.' : 'No Montréal matches found.';
+                    matches.length + ' suggestions available.' : 'No matches found in Montreal';
             })
             .catch(function () {
                 if (requestId !== suggestionRequest) { return; }

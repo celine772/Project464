@@ -12,7 +12,8 @@ For A3 I will add a search bar, so that my reader can find a location.
 It has depth because it responds to the user by showing them features near the location that they searched for.
 I will know it works when I type in an address and the map pans to the correct area.
 
-Test 1: I type in a street address.
+A3 usability testing for live feature:
+Test 1: I type in a street address without the accent.
     Expected: The map pans to that address
 Test 2: I type in the name of a restaurant. 
     Expeected: It pans to that area on the map.
