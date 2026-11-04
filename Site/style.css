@@ -305,7 +305,7 @@ h1 {
     font: inherit;
 }
 
-#location-search > button[type="submit"] {
+#location-search>button[type="submit"] {
     padding: 9px 14px;
     border: 0;
     border-radius: 8px;
@@ -316,7 +316,7 @@ h1 {
     cursor: pointer;
 }
 
-#location-search > button[type="submit"]:hover {
+#location-search>button[type="submit"]:hover {
     background: #874832;
 }
 
@@ -400,9 +400,17 @@ h1 {
     box-shadow: 0 0 0 1px rgb(0 0 0 / 12%);
 }
 
-.wifi-dot { background: #111827; }
-.fountain-dot { background: #2563eb; }
-.attraction-dot { background: #dc2626; }
+.wifi-dot {
+    background: #111827;
+}
+
+.fountain-dot {
+    background: #2563eb;
+}
+
+.attraction-dot {
+    background: #dc2626;
+}
 
 .source-list {
     display: grid;
