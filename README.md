@@ -44,7 +44,16 @@ Evidence: In both of my rounds, my testers were confused when they first opened 
 Severity: The severity is 3. I chose 3 because they thought the map was completely broken and could not use the site at all. If I wasn't sitting next to them they probably would have just closed the site and never opened it again.
 My change: I will change the code so that the points appear on the map right when the site opens, and not only when the map is pressed on.
 Recheck: I asked one of my classmates to try opening the site on thier device, and the points loaded immediately. The problem was fixed.
-          Fixed means: they do it without hesitating at that spot]
 
+## My before and after pictures 
+This is a "before" picture of map which shows how the points on the map would not load on the webpage, until the user pressed on the map itself.
 ![Before Screenshot](Screenshots/screenshot%3Abefore.png)
 
+This is an "after" picture which shows how the points now load right away when the webpage is opened.
+![After Screenshot](Screenshots/screenshot%3Aafter.png)
+
+Which lines do the work: Lines 249 and 358 in app.js are what fixed the problem. They are what refreshes the point markers so they show on the map regardless of whether the user clicks on the map or not.
+
+What I do not fully understand yet: I understand the fix, but I still don't fully understand what the problem was to begin with. I would like to do some digging so I know what to avoid for my next map.
+
+A3 AI disclosure: I used an integrated copilot during A3. It helped my create my search bar feature and then also helped me add an autocomplete feature to it which made the feature much more usable. Co-pilot also assisted me in finding the problem that was causing my  data not to load on the map.
