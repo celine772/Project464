@@ -38,3 +38,10 @@ Test 3: Locations that were types into the search bar that are not in Montreal w
 | 6. On a phone (size view and my phone) | pass
 | 7. Mouse in my pocket | pass
 | 8. Accessibility audit | fault | I was getting an error that my attributes do not match their roles | I fixed it by changing the HTML. It did not impact the funtion of the search bar but it did improve the accesibility feature. Git commit "Improved the search bar accesibility feature".
+
+## Part 3: what I found, and one fix
+Evidence: In both of my rounds, my testers were confused when they first opened my webpage. That's because they were met with an empty map without any data points. They thought that the map was broken. But, once they started to press on the map and zoom in, the points appreared. 
+Severity: The severity is 3. I chose 3 because they thought the map was completely broken and could not use the site at all. If I wasn't sitting next to them they probably would have just closed the site and never opened it again.
+My change: I will change the code so that the points appear on the map right when the site opens, and not only when the map is pressed on.
+Recheck: [the same task, given to someone new, with no help.
+          Fixed means: they do it without hesitating at that spot]

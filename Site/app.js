@@ -355,6 +355,7 @@ function refreshPointMarkers() {
     });
 }
 
+map.on('load', refreshPointMarkers);
 map.on('moveend', refreshPointMarkers);
 
 function loadGeoJSON(path) {
