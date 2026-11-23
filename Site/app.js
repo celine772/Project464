@@ -5,6 +5,7 @@ const map = new maplibregl.Map({
     center: [-73.5673, 45.5017],
     zoom: 12
 });
+const memory = addMemory(map);
 
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
@@ -13,11 +14,50 @@ const searchForm = document.getElementById('location-search');
 const searchInput = document.getElementById('location-query');
 const searchStatus = document.getElementById('search-status');
 const suggestions = document.getElementById('search-suggestions');
+const favoritesStatus = document.getElementById('favorites-status');
+const favoritesList = document.getElementById('favorites-list');
 const layersToggle = document.getElementById('layers-toggle');
 const layersPanel = document.getElementById('layers-panel');
 const loadErrors = [];
 let suggestionTimer;
 let suggestionRequest = 0;
+
+function renderFavorites() {
+    const favorites = memory.getFavorites();
+    favoritesList.replaceChildren();
+    favoritesStatus.textContent = favorites.length ?
+        favorites.length + ' saved location' + (favorites.length === 1 ? '' : 's') +
+        ' — stored in this browser.' : 'No favorite locations saved yet.';
+
+    favorites.forEach(function (favorite) {
+        const item = document.createElement('li');
+        const visit = document.createElement('button');
+        visit.type = 'button';
+        visit.className = 'favorite-visit';
+        visit.textContent = favorite.label;
+        visit.addEventListener('click', function () {
+            map.flyTo({ center: [favorite.lng, favorite.lat], zoom: 16 });
+        });
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'favorite-remove';
+        remove.textContent = 'Remove';
+        remove.setAttribute('aria-label', 'Remove favorite ' + favorite.label);
+        remove.addEventListener('click', function () {
+            if (memory.removeFavorite(favorite.id)) {
+                renderFavorites();
+            } else {
+                favoritesStatus.textContent = 'This browser could not update saved locations.';
+            }
+        });
+
+        item.append(visit, remove);
+        favoritesList.appendChild(item);
+    });
+}
+
+renderFavorites();
 
 layersToggle.addEventListener('click', function () {
     const expanded = layersToggle.getAttribute('aria-expanded') === 'true';
@@ -61,7 +101,6 @@ function photonSearchUrl(query, limit) {
 
 function closeSuggestions() {
     suggestions.hidden = true;
-    searchInput.setAttribute('aria-expanded', 'false');
 }
 
 function showSuggestions(features) {
@@ -74,16 +113,53 @@ function showSuggestions(features) {
             .filter(function (part, index, parts) { return part && part !== primary && parts.indexOf(part) === index; })
             .join(', ');
         const label = secondary ? primary + ' — ' + secondary : primary;
-        const option = document.createElement('button');
-        option.type = 'button';
-        option.setAttribute('role', 'option');
-        option.textContent = label;
-        option.addEventListener('click', function () { selectSearchResult(feature, label); });
-        suggestions.appendChild(option);
+        const row = document.createElement('div');
+        row.className = 'search-suggestion-row';
+
+        const select = document.createElement('button');
+        select.type = 'button';
+        select.className = 'suggestion-select';
+        select.textContent = label;
+        select.setAttribute('aria-label', 'Show ' + label + ' on the map');
+        select.addEventListener('click', function () { selectSearchResult(feature, label); });
+
+        const coordinates = feature.geometry.coordinates;
+        const alreadyFavorite = memory.getFavorites().some(function (favorite) {
+            return favorite.lng === Number(coordinates[0]) && favorite.lat === Number(coordinates[1]);
+        });
+        const star = document.createElement('button');
+        star.type = 'button';
+        star.className = 'suggestion-favorite';
+        star.textContent = alreadyFavorite ? '★' : '☆';
+        star.disabled = alreadyFavorite;
+        star.setAttribute('aria-label', alreadyFavorite ? label + ' is already a favorite' : 'Save ' + label + ' as a favorite');
+        star.title = alreadyFavorite ? 'Already a favorite' : 'Save as favorite';
+        star.addEventListener('click', function () {
+            const result = memory.addFavorite(coordinates, label);
+            if (result.ok) {
+                star.textContent = '★';
+                star.disabled = true;
+                star.setAttribute('aria-label', label + ' is already a favorite');
+                star.title = 'Already a favorite';
+                renderFavorites();
+                favoritesStatus.textContent = 'Saved “' + label + '” in this browser.';
+            } else if (result.reason === 'duplicate') {
+                star.textContent = '★';
+                star.disabled = true;
+                star.setAttribute('aria-label', label + ' is already a favorite');
+                star.title = 'Already a favorite';
+                favoritesStatus.textContent = 'That location is already a favorite.';
+            } else {
+                favoritesStatus.textContent = result.reason === 'storage' ?
+                    'This browser could not save the favorite.' : 'This location could not be saved.';
+            }
+        });
+
+        row.append(select, star);
+        suggestions.appendChild(row);
     });
 
     suggestions.hidden = features.length === 0;
-    searchInput.setAttribute('aria-expanded', String(features.length > 0));
 }
 
 function selectSearchResult(feature, label) {
@@ -127,25 +203,25 @@ searchInput.addEventListener('input', function () {
 });
 
 searchInput.addEventListener('keydown', function (event) {
-    const options = suggestions.querySelectorAll('button');
-    if (event.key === 'ArrowDown' && options.length) {
+    const buttons = suggestions.querySelectorAll('button:not(:disabled)');
+    if (event.key === 'ArrowDown' && buttons.length) {
         event.preventDefault();
-        options[0].focus();
+        buttons[0].focus();
     } else if (event.key === 'Escape') {
         closeSuggestions();
     }
 });
 
 suggestions.addEventListener('keydown', function (event) {
-    const options = Array.from(suggestions.querySelectorAll('button'));
-    const currentIndex = options.indexOf(document.activeElement);
-    if (event.key === 'ArrowDown' && currentIndex < options.length - 1) {
+    const buttons = Array.from(suggestions.querySelectorAll('button:not(:disabled)'));
+    const currentIndex = buttons.indexOf(document.activeElement);
+    if (event.key === 'ArrowDown' && currentIndex < buttons.length - 1) {
         event.preventDefault();
-        options[currentIndex + 1].focus();
+        buttons[currentIndex + 1].focus();
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
         if (currentIndex <= 0) { searchInput.focus(); }
-        else { options[currentIndex - 1].focus(); }
+        else { buttons[currentIndex - 1].focus(); }
     } else if (event.key === 'Escape') {
         closeSuggestions();
         searchInput.focus();

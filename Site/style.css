@@ -74,23 +74,131 @@ h2 {
     box-shadow: 0 3px 8px rgb(0 0 0 / 20%);
 }
 
-.search-suggestions button {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    border: 0;
+.search-suggestion-row {
+    display: flex;
+    align-items: stretch;
     border-bottom: 1px solid #e2e5e9;
+}
+
+.search-suggestion-row:last-child {
+    border-bottom: 0;
+}
+
+.search-suggestion-row button {
+    min-height: 42px;
+    border: 0;
     background: #ffffff;
     color: var(--text);
     font: inherit;
-    text-align: left;
     cursor: pointer;
 }
 
-.search-suggestions button:hover,
-.search-suggestions button:focus-visible {
+.search-suggestion-row .suggestion-select {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-suggestion-row .suggestion-favorite {
+    width: 44px;
+    flex: 0 0 44px;
+    color: var(--accent);
+    font-size: 24px;
+}
+
+.search-suggestion-row button:hover,
+.search-suggestion-row button:focus-visible {
     background: #e8eef8;
     outline: none;
+}
+
+.search-suggestion-row .suggestion-favorite:disabled {
+    cursor: default;
+}
+
+.search-suggestion-row .suggestion-favorite:disabled:hover {
+    background: #ffffff;
+}
+
+.favorites {
+    margin: 14px 0 20px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+}
+
+.favorites h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+#favorites-status {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.favorite-remove,
+.favorite-visit {
+    min-height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+}
+
+.favorites-list {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.favorites-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.favorite-visit {
+    flex: 1;
+    min-width: 0;
+    padding: 5px 8px;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.favorite-remove {
+    padding: 5px 8px;
+    color: var(--muted);
+}
+
+.favorite-map-marker {
+    width: 32px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: var(--favorite-color);
+    font: 30px/1 Arial, Helvetica, sans-serif;
+    text-shadow: 0 1px 3px #ffffff, 0 1px 5px rgb(0 0 0 / 65%);
+    cursor: pointer;
+}
+
+.favorite-visit:focus-visible,
+.favorite-remove:focus-visible,
+.favorite-map-marker:focus-visible {
+    outline: 3px solid #facc15;
+    outline-offset: 2px;
 }
 
 a {

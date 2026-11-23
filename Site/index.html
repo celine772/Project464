@@ -20,13 +20,18 @@
 
         <form id="location-search">
             <label for="location-query">Find an address or place</label>
-            <input id="location-query" type="search" role="combobox" required autocomplete="off"
-                aria-autocomplete="list" aria-controls="search-suggestions" aria-expanded="false">
+            <input id="location-query" type="search" required autocomplete="off">
             <button type="submit">Search</button>
-            <div id="search-suggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions"
-                hidden></div>
+            <div id="search-suggestions" class="search-suggestions" role="group" aria-label="Search suggestions" hidden>
+            </div>
         </form>
         <p id="search-status" role="status" aria-live="polite"></p>
+        <section class="favorites" aria-labelledby="favorites-heading">
+            <h2 id="favorites-heading">Favorite locations</h2>
+            <p id="favorites-status" role="status" aria-live="polite">Use a star beside a search suggestion to save it.
+            </p>
+            <ul id="favorites-list" class="favorites-list"></ul>
+        </section>
         <p id="status" class="data-status" role="status" aria-live="polite"></p>
 
         <div class="map-frame">
@@ -98,6 +103,7 @@
         </div>
     </main>
     <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+    <script src="../memory.js"></script>
     <script src="app.js"></script>
 </body>
 
