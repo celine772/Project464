@@ -527,12 +527,15 @@ function loadPointData() {
             };
 
             addClusteredPointLayer('wifi', shown, '#111827', '../Images/wifi.svg', function (properties) {
+                const wifiAddress = typeof properties.lieu === 'string'
+                    ? properties.lieu.replace(/\b[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d\b/gi, '').trim()
+                    : '';
+
                 return makePopupContent('Free WIFI spot', [
                     { value: translateWifiType(properties.wifi_type) },
-                    {
-                        label: 'Address',
-                        value: properties.lieu.replace(/\b[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d\b/gi, '').trim()
-                    }
+                    wifiAddress
+                        ? { label: 'Address', value: wifiAddress }
+                        : { value: 'No recorded address' }
                 ]);
             });
 
@@ -610,8 +613,14 @@ function loadPointData() {
     loadFountains()
         .then(function (data) {
             addClusteredPointLayer('fountains', data, '#2563eb', '../Images/glass-water%20(1).svg', function (properties) {
+                const fountainAddress = typeof properties.Intersection === 'string'
+                    ? properties.Intersection.trim()
+                    : '';
+
                 return makePopupContent('Public Water Fountain', [
-                    { label: 'Address', value: properties.Intersection }
+                    fountainAddress
+                        ? { label: 'Address', value: fountainAddress }
+                        : { value: 'No recorded address' }
                 ]);
             });
 
