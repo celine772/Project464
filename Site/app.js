@@ -544,12 +544,62 @@ function loadPointData() {
 
     loadGeoJSON('../Data/tourist_attractions.geojson')
         .then(function (data) {
-            addClusteredPointLayer('landmarks', data, '#dc2626', '../Images/pin.svg', function (properties) {
-                return makePopupContent(properties.name, [
-                    { value: properties.type },
-                    { label: 'Arrondissement', value: properties.borough }
-                ]);
-            });
+            fetch('../Data/Touristspots.csv')
+                .then(function (response) {
+                    if (!response.ok) { throw new Error('HTTP ' + response.status + ' loading Touristspots.csv'); }
+                    return response.text();
+                })
+                .then(function (text) {
+                    const addressesById = new Map();
+                    const englishNamesById = {
+                        '207': 'Anjou Metropolitan Golf Course',
+                        '1103': 'Montréal Biodôme',
+                        '1160': 'Rio Tinto Alcan Planetarium',
+                        '1615': 'Montréal Island Golf Course',
+                        '1770': 'Montréal Municipal Golf Course',
+                        '1784': 'Montréal Insectarium',
+                        '1785': 'Montréal Botanical Garden',
+                        '2389': 'Atrium Le 1000',
+                        '2421': 'Montréal Casino',
+                        '2721': 'Place Ville-Marie Observatory',
+                        '2728': 'La Ronde Six Flags',
+                        '2784': 'Grévin Museum Montréal',
+                        '2821': 'Beaver Lake Pavilion',
+                        '2840': 'Place des Arts',
+                        '2862': 'Clock Tower Beach',
+                        '2863': 'Jean-Doré Beach',
+                        '2976': 'Montréal Old Port',
+                        '3438': 'Frédéric-Back Tree House'
+                    };
+
+                    parseCSV(text).forEach(function (row) {
+                        const number = row['Numéro'] ? row['Numéro'].trim() : '';
+                        const street = row['rue'] ? row['rue'].trim() : '';
+                        const city = row['Ville'] ? row['Ville'].trim() : '';
+                        const postalCode = row['Code postal'] ? row['Code postal'].trim() : '';
+                        const addressParts = [number + (street ? ' ' + street : ''), city, postalCode]
+                            .filter(function (part) { return part.trim(); });
+
+                        addressesById.set(String(row.ID), addressParts.join(', '));
+                    });
+
+                    data.features.forEach(function (feature) {
+                        const id = String(feature.properties.id);
+                        feature.properties.englishName = englishNamesById[id] || feature.properties.name;
+                        feature.properties.address = addressesById.get(id) || '';
+                    });
+
+                    addClusteredPointLayer('landmarks', data, '#dc2626', '../Images/pin.svg', function (properties) {
+                        return makePopupContent('Attraction', [
+                            { value: properties.englishName },
+                            { label: 'Address', value: properties.address }
+                        ]);
+                    });
+                })
+                .catch(function (error) {
+                    showLoadError('Tourist attraction addresses could not be loaded');
+                    console.error(error);
+                });
 
         })
         .catch(function (error) {
