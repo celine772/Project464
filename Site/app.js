@@ -1,4 +1,4 @@
-// MapLibre GL JS map with Wi-Fi and tourist attraction layers.
+//app.js contorls the map and the user interface of the website. It handles loading and displaying point data, managing favorite locations, and providing search functionality.
 const map = new maplibregl.Map({
     container: 'map',
     style: 'https://tiles.openfreemap.org/styles/positron',
@@ -316,7 +316,7 @@ function translateWifiType(type) {
 
 const pointCollections = [];
 let renderedMarkers = [];
-const clusterDistance = 20;
+const clusterDistance = 40;
 
 function addClusteredPointLayer(id, data, color, iconPath, popupDetails) {
     const layerToggle = layersPanel.querySelector('[data-layer-id="' + id + '"]');

@@ -1,11 +1,11 @@
 /* GEOG 464 memory.js: save favorite locations in this browser. */
 
-// ===== CHANGE THIS PART =====
+
 const MEMORY = {
     storageKey: "geog464-favorite-addresses",
     markerColour: "#a65d43"
 };
-// ===== END OF THE PART TO CHANGE =====
+
 
 function addMemory(map) {
     let favorites = [];
