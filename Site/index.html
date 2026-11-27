@@ -33,12 +33,6 @@
             </div>
         </form>
         <p id="search-status" role="status" aria-live="polite"></p>
-        <section class="favorites" aria-labelledby="favorites-heading">
-            <h2 id="favorites-heading">Favorite locations</h2>
-            <p id="favorites-status" role="status" aria-live="polite">Use a star beside a search suggestion to save it.
-            </p>
-            <ul id="favorites-list" class="favorites-list"></ul>
-        </section>
         <p id="status" class="data-status" role="status" aria-live="polite"></p>
 
         <div class="map-frame">
@@ -76,24 +70,14 @@
             </div>
         </div>
 
+        <section class="favorites" aria-labelledby="favorites-heading">
+            <h2 id="favorites-heading">Favorite locations</h2>
+            <p id="favorites-status" role="status" aria-live="polite">Use a star beside a search suggestion to save it.
+            </p>
+            <ul id="favorites-list" class="favorites-list"></ul>
+        </section>
+
         <div class="map-information">
-            <section class="info-section" aria-labelledby="about-heading">
-                <h2 id="about-heading">About this map</h2>
-                <p>Visiting Montreal for the first time? Let this map be your guide to exploring the city with ease.
-                    Find free WI-FI spots to stay connected, public drinking fountains to keep hydrated, and explore the
-                    best attractions that the city has to offer.
-                </p>
-
-                <p>
-                    Tap the different symbols on the map to view more information on them, or use the dropdown menu in
-                    the corner of the map to filter locations and find exactly what you are looking for. Make the map
-                    your own, and take your stress out of discovering a new city.
-                </p>
-                <p>
-                    Welcome to Montreal!
-                </p>
-            </section>
-
             <section class="info-section" aria-labelledby="howto-heading">
                 <h2 id="howto-heading">How to use the map</h2>
                 <p>Tap the different markers on the map to view more information on them, or use the dropdown menu in
@@ -104,17 +88,10 @@
                     the top of the map. Simply click the star icon next to an address in the search bar to save it for
                     later. </p>
                 <p>
-                    Make the map your own, and take your stress out of discovering a new city..</p>
+                    Make the map your own, and take your stress out of discovering a new city.</p>
                 </p>
             </section>
 
-            <section class="info-section sources" aria-labelledby="sources-heading">
-                <h2 id="sources-heading">Data sources &amp; method</h2>
-                <p> Data on Wi-Fi locations, water fountains, and tourist attractions were sources from City of
-                    Montreal's Open Data Portal. </p>
-
-
-            </section>
         </div>
     </main>
     <script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>

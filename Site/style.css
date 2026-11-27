@@ -716,6 +716,11 @@ h1 {
     width: 100%;
     height: min(68vh, 760px);
     min-height: 480px;
+    margin-top: 32px;
+}
+
+.map-frame+.favorites {
+    margin-top: 32px;
 }
 
 #map {
