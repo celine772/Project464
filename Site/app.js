@@ -281,7 +281,7 @@ function makePopupContent(title, details) {
 
     return content;
 }
-
+//Function to translate location types from French to English for WI-FI locations.
 function translateWifiType(type) {
     const translations = {
         'arena': 'Arena',
@@ -494,6 +494,7 @@ function parseCSV(text) {
     });
 }
 
+//Loads the public fountains CSV file and filters out any rows that contain "accès restreint" in any of the values.
 function loadFountains() {
     return fetch('../Data/Public_Fountains.csv').then(function (response) {
         if (!response.ok) { throw new Error('HTTP ' + response.status + ' loading Public_Fountains.csv'); }
@@ -551,6 +552,7 @@ function loadPointData() {
             console.error(error);
         });
 
+    //Load tourist attractions from the CSV and turn it into a GeoJSON while leaving unwanted features not shown on map.
     loadGeoJSON('../Data/tourist_attractions.geojson')
         .then(function (data) {
             fetch('../Data/Touristspots.csv')
@@ -616,6 +618,7 @@ function loadPointData() {
             console.error(error);
         });
 
+    //Writes :no addresses recorded" if water fountain has no address recorded in the CSV file. Otherwise, it will display the address of the fountain.
     loadFountains()
         .then(function (data) {
             addClusteredPointLayer('fountains', data, '#2563eb', '../Images/glass-water%20(1).svg', function (properties) {
