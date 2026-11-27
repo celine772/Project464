@@ -621,6 +621,64 @@ body {
     overflow: auto;
 }
 
+.site-navigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 58px;
+    padding: 8px clamp(20px, 4vw, 56px);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.site-navigation a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.site-navigation a:hover,
+.site-navigation a:focus-visible,
+.site-navigation a[aria-current="page"] {
+    background: #f5eee7;
+    color: var(--accent);
+}
+
+.site-navigation a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.simple-page {
+    width: min(100%, 1600px);
+    min-height: calc(100vh - 58px);
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 64px);
+}
+
+.simple-page h1 {
+    margin: 0;
+}
+
+/* Change the font size of paragraphs on the About page */
+.about-page p {
+    font-size: 17px;
+}
+
+/* Image on the About page */
+.about-image {
+    display: block;
+    width: min(100%, 1300px);
+    height: auto;
+    margin-top: 24px;
+    border-radius: 12px;
+}
+
 .map-page {
     width: min(100%, 1600px);
     margin: 0 auto;
@@ -743,6 +801,18 @@ h1 {
 }
 
 @media (max-width: 800px) {
+    .site-navigation {
+        gap: 2px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .site-navigation a {
+        padding-right: 9px;
+        padding-left: 9px;
+        font-size: 14px;
+    }
+
     .map-page {
         padding: 22px 18px;
     }
