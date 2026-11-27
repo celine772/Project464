@@ -21,6 +21,7 @@ const layersPanel = document.getElementById('layers-panel');
 const loadErrors = [];
 let suggestionTimer;
 let suggestionRequest = 0;
+let searchMarker = null;
 
 function renderFavorites() {
     const favorites = memory.getFavorites();
@@ -166,6 +167,11 @@ function selectSearchResult(feature, label) {
     searchInput.value = label;
     closeSuggestions();
     searchInput.focus();
+    if (searchMarker) { searchMarker.remove(); }
+    searchMarker = new maplibregl.Marker({ color: '#A65D43' })
+        .setLngLat(feature.geometry.coordinates)
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setText(label))
+        .addTo(map);
     map.flyTo({ center: feature.geometry.coordinates, zoom: 15 });
     searchStatus.textContent = 'Map moved to ' + label + '.';
 }
